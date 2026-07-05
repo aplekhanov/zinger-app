@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="robots" content="noindex">
+	<title>Zinger — AI Roast Generator</title>
+	<style>
+		:root {
+			--orange: #FA7000;
+			--orange-deep: #E85D00;
+			--yellow: #FFD60A;
+			--blue: #0A84FF;
+			--ink: #1A1200;
+		}
+
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+
+		html, body { height: 100%; }
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+			background: linear-gradient(180deg, var(--orange) 0%, var(--orange-deep) 100%);
+			color: var(--ink);
+			display: flex;
+			flex-direction: column;
+			min-height: 100dvh;
+			text-align: center;
+			-webkit-text-size-adjust: 100%;
+		}
+
+		.content {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 14px;
+			padding: 24px 24px 8px;
+			padding-top: calc(24px + env(safe-area-inset-top));
+		}
+
+		.app-icon {
+			width: 96px;
+			height: 96px;
+			border-radius: 22px;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+		}
+
+		h1 {
+			font-size: 40px;
+			font-weight: 900;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+		}
+
+		.tagline {
+			font-size: 17px;
+			font-weight: 700;
+			color: var(--yellow);
+			text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+		}
+
+		.features {
+			list-style: none;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			font-size: 15px;
+			font-weight: 600;
+			color: #FFF3E0;
+		}
+
+		.screenshot {
+			width: min(58vw, 230px);
+			border-radius: 24px;
+			border: 4px solid rgba(0, 0, 0, 0.55);
+			box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+			margin-top: 6px;
+		}
+
+		.cta-bar {
+			position: sticky;
+			bottom: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 4px;
+			padding: 16px 24px;
+			padding-bottom: calc(16px + env(safe-area-inset-bottom));
+			background: linear-gradient(180deg, rgba(232, 93, 0, 0) 0%, var(--orange-deep) 40%);
+		}
+
+		.get-button {
+			width: 100%;
+			max-width: 360px;
+			padding: 16px;
+			border: none;
+			border-radius: 16px;
+			background: var(--yellow);
+			color: var(--ink);
+			font-family: inherit;
+			font-size: 19px;
+			font-weight: 900;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			cursor: pointer;
+			box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+		}
+
+		.get-button:active { transform: scale(0.97); }
+
+		.dismiss-button {
+			background: none;
+			border: none;
+			padding: 12px;
+			font-family: inherit;
+			font-size: 15px;
+			font-weight: 600;
+			color: rgba(255, 243, 224, 0.75);
+			cursor: pointer;
+		}
+
+		.farewell {
+			display: none;
+			flex: 1;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 12px;
+			padding: 24px;
+			font-size: 17px;
+			font-weight: 700;
+			color: #FFF3E0;
+		}
+
+		body.dismissed .content, body.dismissed .cta-bar { display: none; }
+		body.dismissed .farewell { display: flex; }
+	</style>
+</head>
+<body>
+	<main class="content">
+		<img class="app-icon" src="/zinger-app/assets/appicon.png" alt="Zinger app icon">
+		<h1>Zinger</h1>
+		<p class="tagline">Savage AI roasts at lightning speed</p>
+		<ul class="features">
+			<li>⚡️ Upload a selfie, group pic, or chat screenshot</li>
+			<li>🎚️ Pick your voltage — from playful to merciless</li>
+			<li>😈 Get a roast that actually lands, in seconds</li>
+		</ul>
+		<img class="screenshot" src="/zinger-app/assets/screenshot/yourscreenshot.png" alt="Zinger screenshot" onerror="this.remove()">
+	</main>
+
+	<div class="cta-bar">
+		<button class="get-button" id="get-zinger">Get Zinger — Free</button>
+		<button class="dismiss-button" id="dismiss">Not interested</button>
+	</div>
+
+	<div class="farewell">
+		<p>No hard feelings. 🙌</p>
+	</div>
+
+	<script>
+		var CAMPAIGN_ID = "zinger_promo_2026_07";
+		var APP_ID = "6754587628";
+		var APP_STORE_URL = "https://apps.apple.com/us/app/zinger-ai-roast-generator/id" + APP_ID;
+
+		function bridge() {
+			return window.webkit
+				&& window.webkit.messageHandlers
+				&& window.webkit.messageHandlers.iconMaker;
+		}
+
+		document.getElementById("get-zinger").addEventListener("click", function () {
+			var handler = bridge();
+			if (handler) {
+				handler.postMessage({ type: "openAppStore", appId: APP_ID, campaignId: CAMPAIGN_ID });
+			} else {
+				window.location.href = APP_STORE_URL;
+			}
+		});
+
+		document.getElementById("dismiss").addEventListener("click", function () {
+			var handler = bridge();
+			if (handler) {
+				handler.postMessage({ type: "dismissed", campaignId: CAMPAIGN_ID });
+			}
+			document.body.classList.add("dismissed");
+		});
+	</script>
+</body>
+</html>
