@@ -163,6 +163,12 @@
 	<script>
 		var CAMPAIGN_ID = "zinger_promo_2026_07";
 		var APP_ID = "6754587628";
+
+		window.ZINGER_PROMO_CONFIG = { campaignId: CAMPAIGN_ID };
+	</script>
+	<script src="main.js"></script>
+
+	<script>
 		var APP_STORE_URL = "https://apps.apple.com/us/app/zinger-ai-roast-generator/id" + APP_ID;
 
 		function bridge() {
@@ -171,8 +177,22 @@
 				&& window.webkit.messageHandlers.iconMaker;
 		}
 
+		function track(event, params) {
+			if (window.ZingerPromo) {
+				window.ZingerPromo.track(event, params);
+			}
+		}
+
+		function setOutcome(value) {
+			if (window.ZingerPromo) {
+				window.ZingerPromo.setOutcome(value);
+			}
+		}
+
 		document.getElementById("get-zinger").addEventListener("click", function () {
 			var handler = bridge();
+			setOutcome("cta_click");
+			track("promo_cta_click", { destination: handler ? "native_store_sheet" : "app_store_web" });
 			if (handler) {
 				handler.postMessage({ type: "openAppStore", appId: APP_ID, campaignId: CAMPAIGN_ID });
 			} else {
@@ -182,6 +202,8 @@
 
 		document.getElementById("dismiss").addEventListener("click", function () {
 			var handler = bridge();
+			setOutcome("dismiss");
+			track("promo_dismiss");
 			if (handler) {
 				handler.postMessage({ type: "dismissed", campaignId: CAMPAIGN_ID });
 			}
